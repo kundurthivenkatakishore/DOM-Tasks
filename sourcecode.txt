@@ -1,0 +1,481 @@
+Source code for DOM-Tasks
+
+2.Calculator Task
+
+HTML:
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style1.css">
+    </head>
+    <body>
+    <section>
+        <div class="container">
+          <div class="calculator">
+            <div class="display">
+              <div class="display-1">0</div>
+              <div class="display-2">0</div>
+              <div class="temp-result"></div>
+            </div>
+            <div class="all_button">
+              <div class="button all-clear">C</div>
+              <div class="button last-entity-clear">CE</div>
+              <div class="button number dot">.</div>
+              <div class="button operation">x</div>
+              <div class="button number">7</div>
+              <div class="button number">8</div>
+              <div class="button number">9</div>
+              <div class="button operation">/</div>
+              <div class="button number">4</div>
+              <div class="button number">5</div>
+              <div class="button number">6</div>
+              <div class="button operation">-</div>
+              <div class="button number">1</div>
+              <div class="button number">2</div>
+              <div class="button number">3</div>
+              <div class="button operation">+</div>
+              <div class="button number">0</div>
+              <div class="button btn-0 number">00</div>   
+              <div class="button equal">=</div>
+            </div>
+          </div>
+        </div>
+    </section>
+    <script src="script1.js"></script>
+    </body>
+    </html>
+    
+CSS:
+  * {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  }
+  
+  section {
+    background-color: black;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .container {
+    width: 90%;
+    max-width: 400px;
+    background-color: #DCDCDC;
+    border-radius: 8px;
+    overflow: hidden;
+    margin:20px;
+  }
+  .display {
+    background-color: rgb(182, 182, 182);
+    height: 100px;
+    width: 92%;
+    text-align: left;
+    padding: 20px;
+    font-size: 30px;
+    margin: 15px;
+  }
+  .display-1 {
+    opacity: 0.4;
+    font-size: 20px;
+    height: 20px;
+    overflow: hidden;
+  }
+  .temp-result {
+    position: absolute;
+    bottom: 0;
+    left: 10;
+    font-size: 20px;
+    opacity: 0.3;
+  }
+  .all_button {
+    color: black;
+    display: grid;
+    grid-template: repeat(4, 1fr) / repeat(4, 1fr);
+    margin:15px;
+  }
+  .button {
+    border: none;
+    display: inline-block;
+    height: 80px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  .button:hover {
+    background-color: rgba(200, 216, 216, 0.842);
+  }
+  .equal{
+    grid-column: 3/5;
+    background-color: cornflowerblue;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    width: 96%;
+    height: 70px;
+  }
+  .equal:hover{
+    background-color: blue;
+  }
+  
+Javascript:
+
+const display1 = document.querySelector(".display-1");
+const display2 = document.querySelector(".display-2");
+const tempResult = document.querySelector(".temp-result");
+const numbers = document.querySelectorAll(".number");
+const operation = document.querySelectorAll(".operation");
+const equal = document.querySelector(".equal");
+const clearAll = document.querySelector(".all-clear");
+const clearLast = document.querySelector(".last-entity-clear");
+let dis1Num = "";
+let dis2Num = "";
+let result = null;
+let lastOperation = "";
+let haveDot = false;
+
+numbers.forEach((number) => {
+  number.addEventListener("click", (e) => {
+    if (e.target.innerText === "." && !haveDot) {
+      haveDot = true;
+    } else if (e.target.innerText === "." && haveDot) {
+      return;
+    }
+    dis2Num += e.target.innerText;
+    display2.innerText = dis2Num;
+  });
+});
+
+operation.forEach((operation) => {
+  operation.addEventListener("click", (e) => {
+    if (!dis2Num) return;
+    haveDot = false;
+    const operationName = e.target.innerText;
+    if (dis1Num && dis2Num && lastOperation) {
+      mathOperation();
+    } else {
+      result = parseFloat(dis2Num);
+    }
+    clearVar(operationName);
+    lastOperation = operationName;
+    console.log(result);
+  });
+});
+function clearVar(name = "") {
+  dis1Num += dis2Num + " " + name + " ";
+  display1.innerText = dis1Num;
+  display2.innerText = "";
+  dis2Num = "";
+  tempResult.innerText = result;
+}
+
+function mathOperation() {
+  if (lastOperation === "x") {
+    result = parseFloat(result) * parseFloat(dis2Num);
+  } else if (lastOperation === "+") {
+    result = parseFloat(result) + parseFloat(dis2Num);
+  } else if (lastOperation === "-") {
+    result = parseFloat(result) - parseFloat(dis2Num);
+  } else if (lastOperation === "/") {
+    result = parseFloat(result) / parseFloat(dis2Num);
+  } else if (lastOperation === "%") {
+    result = parseFloat(result) % parseFloat(dis2Num);
+  }
+}
+
+equal.addEventListener("click", () => {
+  if (!dis2Num || !dis1Num) return;
+  haveDot = false;
+  mathOperation();
+  clearVar();
+  display2.innerText = result;
+  tempResult.innerText = "";
+  dis2Num = result;
+  dis1Num = "";
+});
+
+clearAll.addEventListener("click", () => {
+  dis1Num = "";
+  dis2Num = "";
+  display1.innerText = "";
+  display2.innerText = "";
+  result = "";
+  tempResult.innerText = "";
+});
+
+clearLast.addEventListener("click", () => {
+  display2.innerText = "";
+  dis2Num = "";
+});
+
+window.addEventListener("keydown", (e) => {
+  if (
+    e.key === "0" ||
+    e.key === "1" ||
+    e.key === "2" ||
+    e.key === "3" ||
+    e.key === "4" ||
+    e.key === "5" ||
+    e.key === "6" ||
+    e.key === "7" ||
+    e.key === "8" ||
+    e.key === "9" ||
+    e.key === "."
+  ) {
+    clickButtonEl(e.key);
+  } else if (e.key === "+" || e.key === "-" || e.key === "/") {
+    clickOperation(e.key);
+  } else if (e.key === "*") {
+    clickOperation("x");
+  } else if (e.key == "Enter" || e.key === "=") {
+    clickEqual();
+  } else{
+    alert("Only Numbers are allowed")
+  }
+});
+function clickButtonEl(key) {
+  numbers.forEach((button) => {
+    if (button.innerText === key) {
+      button.click();
+    }
+  });
+}
+function clickOperation(key) {
+  operation.forEach((operation) => {
+    if (operation.innerText === key) {
+      operation.click();
+    }
+  });
+}
+function clickEqual() {
+  equal.click();
+}
+
+
+3.Insert Data Into Table Using DOM    
+
+HTML:
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DOM Forms</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+      integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn"
+      crossorigin="anonymous"
+    />
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- MDB -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.1/mdb.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style2.css" />
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td>
+          <form onsubmit="event.preventDefault();onFormSubmit();" action="">
+            <div>
+              <label for="">First Name</label></br>
+              <input type="text" id="firstname" name="firstname" />
+            </div>
+
+            <div>
+              <label for="">Last Name</label></br>
+              <input type="text" id="lastname" name="lastname" />
+            </div>
+
+            <div>
+              <label for="">Adress</label></br>
+              <input type="text" id="adress" name="adress" />
+            </div>
+
+            <div>
+              <label for="">Pin Code</label></br>
+              <input type="text" name="pincode" id="pincode" />
+            </div>
+            <div>
+                <label for="">Gender</label></br>
+                <input type="text" name="gender" id="gender" />
+              </div>
+              <div>
+                <label for="">Food</label></br>
+                <input type="text" name="food" id="food" />
+              </div>
+              <div>
+                <label for="">State</label></br>
+                <input type="text" name="state" id="state" />
+              </div>
+              <div>
+                <label for="">Country</label></br>
+                <input type="text" name="country" id="country" />
+              </div>
+
+            <div class="form-action-buttons">
+              <input type="submit" value="Submit" />
+            </div>
+          </form>
+        </td>
+        </tr>
+        <td>
+          <table class="list" id="employeeList">
+            <thead>
+              <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Adress</th>
+                <th>Pin Code</th>
+                <th>Gender</th>
+                <th>Food</th>
+                <th>State</th>
+                <th>Country</th>
+              </tr>
+            </thead>
+
+            <!-- /Created a Empty table body so that goes within this body  -->
+            <tbody></tbody>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <script src="script2.js"></script>
+  </body>
+</html>
+
+CSS:
+ 
+* {
+    background-color: pink;
+    font-size: 20px;
+  }
+  
+  table {
+    width: 100%;
+  }
+  
+  table {
+    border-collapse: collapse;
+  }
+  
+  table.list {
+    width: 100%;
+  }
+  
+  td,
+  th {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: left;
+  }
+  
+  input[type="text"],
+  input[type="number"] {
+    background-color: rgb(243, 201, 234);
+    width: 50%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 2px solid rgb(19, 15, 15);
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+  
+  input[type="submit"] {
+    background-color: rgb(216, 32, 223);
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    margin: 8px 0;
+    border: 2px solid rgb(19, 15, 15);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  form div.form-action-buttons {
+    text-align: center;
+  }
+  
+Javascript:
+  
+let selectedRow = null;
+
+function onFormSubmit() {
+  var formData = readFormData();
+
+  if (selectedRow == null) insertNewRecord(formData);
+  else updateRecord(formData);
+
+  resetForm();
+}
+
+function readFormData() {
+  const formData = {};
+  formData["firstname"] = document.getElementById("firstname").value;
+  formData["lastname"] = document.getElementById("lastname").value;
+  formData["adress"] = document.getElementById("adress").value;
+  formData["pincode"] = document.getElementById("pincode").value;
+  formData["gender"] = document.getElementById("gender").value;
+  formData["food"] = document.getElementById("food").value;
+  formData["state"] = document.getElementById("state").value;
+  formData["country"] = document.getElementById("country").value;
+  return formData;
+}
+
+function insertNewRecord(data) {
+  let table = document
+    .getElementById("employeeList")
+    .getElementsByTagName("tbody")[0];
+
+  var newRow = table.insertRow(table.length);
+  cell1 = newRow.insertCell(0);
+  cell1.innerHTML = data.firstname;
+  cell2 = newRow.insertCell(1);
+  cell2.innerHTML = data.lastname;
+  cell3 = newRow.insertCell(2);
+  cell3.innerHTML = data.adress;
+  cell4 = newRow.insertCell(3);
+  cell4.innerHTML = data.pincode;
+  cell5 = newRow.insertCell(4);
+  cell5.innerHTML = data.gender;
+  cell6 = newRow.insertCell(5);
+  cell6.innerHTML = data.food;
+  cell7 = newRow.insertCell(6);
+  cell7.innerHTML = data.state;
+  cell8 = newRow.insertCell(7);
+  cell8.innerHTML = data.country;
+}
+
+function resetForm() {
+  document.getElementById("firstname").value = "";
+  document.getElementById("lastname").value = "";
+  document.getElementById("adress").value = "";
+  document.getElementById("pincode").value = "";
+  document.getElementById("gender").value = "";
+  document.getElementById("food").value = "";
+  document.getElementById("state").value = "";
+  document.getElementById("country").value = "";
+  selectedRow = null;
+}
